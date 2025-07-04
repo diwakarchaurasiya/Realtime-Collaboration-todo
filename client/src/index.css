@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-slate-200 hover:shadow-md transition-shadow duration-200;
+  }
+
+  .btn {
+    @apply px-4 py-2 rounded-md font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500;
+  }
+
+  .btn-secondary {
+    @apply btn bg-slate-200 text-slate-900 hover:bg-slate-300 focus:ring-slate-500;
+  }
+
+  .btn-danger {
+    @apply btn bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+  }
+
+  .input {
+    @apply w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+  }
+
+  .textarea {
+    @apply input resize-none;
+  }
+
+  .select {
+    @apply input cursor-pointer;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Drag and drop styles */
+.dragging {
+  opacity: 0.5;
+  transform: rotate(5deg);
+}
+
+.drop-zone {
+  @apply bg-primary-50 border-2 border-dashed border-primary-300 rounded-lg;
+}
+
+/* Toast customization */
+.Toastify__toast-container {
+  @apply text-sm;
+}
+
+.Toastify__toast {
+  @apply rounded-lg shadow-lg;
+}
+
+.Toastify__toast--success {
+  @apply bg-green-500;
+}
+
+.Toastify__toast--error {
+  @apply bg-red-500;
+}
+
+.Toastify__toast--warning {
+  @apply bg-yellow-500;
+}
+
+.Toastify__toast--info {
+  @apply bg-blue-500;
+}
