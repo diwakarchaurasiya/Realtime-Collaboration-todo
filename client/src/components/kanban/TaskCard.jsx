@@ -96,7 +96,7 @@ export default function TaskCard({
                     {assignedUser.name}
                   </span>
                 </div>
-              ) : (
+              ) : task.status === "Todo" ? (
                 <button
                   onClick={() => onSmartAssign(task._id)}
                   className="flex items-center space-x-1 text-xs text-primary-600 hover:text-primary-800"
@@ -104,6 +104,11 @@ export default function TaskCard({
                   <Zap className="h-3 w-3" />
                   <span>Smart Assign</span>
                 </button>
+              ) : (
+                <div className="flex items-center space-x-1 text-xs text-slate-500">
+                  <User className="h-3 w-3" />
+                  <span>Unassigned</span>
+                </div>
               )}
             </div>
 

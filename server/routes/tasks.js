@@ -11,8 +11,6 @@ const router = express.Router();
 router.get('/', authenticateToken, async (req, res) => {
   try {
     const tasks = await Task.find({})
-      .populate('assignedUser', 'name email avatar')
-      .populate('createdBy', 'name email avatar')
       .sort({ createdAt: -1 });
 
     res.json(tasks);
@@ -45,11 +43,11 @@ router.post('/', [
     }
 
     // Check for duplicate title in the same board
-    const existingTask = await Task.findOne({ 
+    const existingTask = await Task.findOne({
       title: title.trim(),
-      boardId: 'main-board' 
+      boardId: 'main-board'
     });
-    
+
     if (existingTask) {
       return res.status(400).json({ message: 'Task title must be unique' });
     }
@@ -112,12 +110,12 @@ router.put('/:id', [
         return res.status(400).json({ message: 'Task title cannot match column names' });
       }
 
-      const existingTask = await Task.findOne({ 
+      const existingTask = await Task.findOne({
         title: updateData.title.trim(),
         boardId: 'main-board',
         _id: { $ne: id }
       });
-      
+
       if (existingTask) {
         return res.status(400).json({ message: 'Task title must be unique' });
       }
@@ -153,7 +151,7 @@ router.delete('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     const task = await Task.findById(id);
-    
+
     if (!task) {
       return res.status(404).json({ message: 'Task not found' });
     }
@@ -181,14 +179,14 @@ router.post('/:id/smart-assign', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     const task = await Task.findById(id);
-    
+
     if (!task) {
       return res.status(404).json({ message: 'Task not found' });
     }
 
     // Get all users
     const users = await User.find({});
-    
+
     // Count active tasks for each user
     const userTaskCounts = await Promise.all(
       users.map(async (user) => {
@@ -201,7 +199,7 @@ router.post('/:id/smart-assign', authenticateToken, async (req, res) => {
     );
 
     // Find user with minimum active tasks
-    const userWithMinTasks = userTaskCounts.reduce((min, current) => 
+    const userWithMinTasks = userTaskCounts.reduce((min, current) =>
       current.activeTaskCount < min.activeTaskCount ? current : min
     );
 

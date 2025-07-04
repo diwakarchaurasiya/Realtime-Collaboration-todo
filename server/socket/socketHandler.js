@@ -11,7 +11,7 @@ export const handleSocketConnection = (socket, io) => {
   socket.on('task-update', async (data) => {
     try {
       const { taskId, updates, version } = data;
-      
+
       const task = await Task.findById(taskId);
       if (!task) {
         socket.emit('error', { message: 'Task not found' });
@@ -34,7 +34,7 @@ export const handleSocketConnection = (socket, io) => {
       Object.assign(task, updates);
       task.lastModified = new Date();
       task.version += 1;
-      
+
       await task.save();
       await task.populate(['assignedUser', 'createdBy'], 'name email avatar');
 
@@ -63,7 +63,7 @@ export const handleSocketConnection = (socket, io) => {
   socket.on('task-status-change', async (data) => {
     try {
       const { taskId, newStatus, newIndex } = data;
-      
+
       const task = await Task.findById(taskId);
       if (!task) {
         socket.emit('error', { message: 'Task not found' });
@@ -74,7 +74,7 @@ export const handleSocketConnection = (socket, io) => {
       task.status = newStatus;
       task.lastModified = new Date();
       task.version += 1;
-      
+
       await task.save();
       await task.populate(['assignedUser', 'createdBy'], 'name email avatar');
 
@@ -104,11 +104,31 @@ export const handleSocketConnection = (socket, io) => {
     }
   });
 
+  // Handle task creation
+  socket.on('task-created', async (task) => {
+    try {
+      // Broadcast to all other users in the board (excluding sender)
+      socket.to('main-board').emit('task-created', task);
+    } catch (error) {
+      console.error('Task creation broadcast error:', error);
+    }
+  });
+
+  // Handle task assignment
+  socket.on('task-assigned', async (task) => {
+    try {
+      // Broadcast to all other users in the board (excluding sender)
+      socket.to('main-board').emit('task-assigned', task);
+    } catch (error) {
+      console.error('Task assignment broadcast error:', error);
+    }
+  });
+
   // Handle task deletion
   socket.on('task-delete', async (data) => {
     try {
       const { taskId } = data;
-      
+
       const task = await Task.findById(taskId);
       if (!task) {
         socket.emit('error', { message: 'Task not found' });
@@ -142,7 +162,7 @@ export const handleSocketConnection = (socket, io) => {
   socket.on('resolve-conflict', async (data) => {
     try {
       const { taskId, resolution, updates } = data;
-      
+
       const task = await Task.findById(taskId);
       if (!task) {
         socket.emit('error', { message: 'Task not found' });
@@ -154,7 +174,7 @@ export const handleSocketConnection = (socket, io) => {
         Object.assign(task, updates);
         task.lastModified = new Date();
         task.version += 1;
-        
+
         await task.save();
         await task.populate(['assignedUser', 'createdBy'], 'name email avatar');
 

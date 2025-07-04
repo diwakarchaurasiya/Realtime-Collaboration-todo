@@ -9,6 +9,10 @@ import {
   UserCheck,
   CheckCircle,
   FileText,
+  ArrowRight,
+  ArrowLeft,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
 
 const actionIcons = {
@@ -41,6 +45,70 @@ export default function ActivityPanel({ activities }) {
     return `${Math.floor(diffInMinutes / 1440)}d ago`;
   };
 
+  const getStatusOrder = (status) => {
+    const statusOrder = { Todo: 0, "In Progress": 1, Done: 2 };
+    return statusOrder[status] || 0;
+  };
+
+  const getMovementDirection = (details) => {
+    // Extract from and to status from details string
+    const match = details.match(/from (.+?) to (.+?)$/);
+    if (!match) return null;
+
+    const [, fromStatus, toStatus] = match;
+    const fromOrder = getStatusOrder(fromStatus);
+    const toOrder = getStatusOrder(toStatus);
+
+    if (fromOrder < toOrder) return "forward";
+    if (fromOrder > toOrder) return "backward";
+    return "same";
+  };
+
+  const renderMovementVisual = (details) => {
+    const match = details.match(/from (.+?) to (.+?)$/);
+    if (!match) return null;
+
+    const [, fromStatus, toStatus] = match;
+    const direction = getMovementDirection(details);
+
+    const statusColors = {
+      Todo: "bg-slate-100 text-slate-700",
+      "In Progress": "bg-blue-100 text-blue-700",
+      Done: "bg-green-100 text-green-700",
+    };
+
+    const getArrowIcon = () => {
+      switch (direction) {
+        case "forward":
+          return <ArrowRight className="h-3 w-3 text-blue-600" />;
+        case "backward":
+          return <ArrowLeft className="h-3 w-3 text-orange-600" />;
+        default:
+          return <RefreshCw className="h-3 w-3 text-gray-600" />;
+      }
+    };
+
+    return (
+      <div className="flex items-center space-x-2 mt-2">
+        <span
+          className={`text-xs px-2 py-1 rounded-full ${
+            statusColors[fromStatus] || "bg-gray-100 text-gray-700"
+          }`}
+        >
+          {fromStatus}
+        </span>
+        {getArrowIcon()}
+        <span
+          className={`text-xs px-2 py-1 rounded-full ${
+            statusColors[toStatus] || "bg-gray-100 text-gray-700"
+          }`}
+        >
+          {toStatus}
+        </span>
+      </div>
+    );
+  };
+
   return (
     <div className="h-screen overflow-auto flex flex-col">
       <div className="p-4 border-b border-slate-200">
@@ -58,10 +126,14 @@ export default function ActivityPanel({ activities }) {
           </div>
         ) : (
           <div className="space-y-3">
-            {activities.map((activity) => (
+            {activities.map((activity, index) => (
               <div
                 key={activity._id}
-                className="flex items-start space-x-3 p-3 bg-slate-50 rounded-lg animate-fade-in"
+                className={`flex items-start space-x-3 p-3 bg-slate-50 rounded-lg transition-all duration-300 ${
+                  index === 0
+                    ? "animate-pulse bg-blue-50 border border-blue-200"
+                    : "animate-fade-in"
+                }`}
               >
                 <div className="flex-shrink-0 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm">
                   <div className="text-slate-600">
@@ -91,6 +163,10 @@ export default function ActivityPanel({ activities }) {
                   <p className="text-sm text-slate-600 mt-1">
                     {activity.details}
                   </p>
+
+                  {/* Show movement visual for moved tasks */}
+                  {activity.action === "moved" &&
+                    renderMovementVisual(activity.details)}
 
                   <div className="flex items-center space-x-1 mt-2">
                     <Clock className="h-3 w-3 text-slate-400" />
