@@ -1,37 +1,37 @@
-import { useState } from 'react'
-import { Link, Navigate } from 'react-router-dom'
-import { useAuth } from '../../context/AuthContext'
-import { UserPlus, Mail, Lock, User } from 'lucide-react'
+import { useState } from "react";
+import { Link, Navigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { UserPlus, Mail, Lock, User, Loader2 } from "lucide-react";
 
 export default function Register() {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const { register, user } = useAuth()
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { register, user } = useAuth();
 
   if (user) {
-    return <Navigate to="/dashboard" replace />
+    return <Navigate to="/dashboard" replace />;
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     if (password !== confirmPassword) {
-      return
+      return;
     }
-    
-    setLoading(true)
-    
-    const result = await register(name, email, password)
-    
+
+    setLoading(true);
+
+    const result = await register(name, email, password);
+
     if (result.success) {
       // Navigation will be handled by the AuthContext
     }
-    
-    setLoading(false)
-  }
+
+    setLoading(false);
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-secondary-50 px-4">
@@ -44,7 +44,7 @@ export default function Register() {
             Create your account
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Or{' '}
+            Or{" "}
             <Link
               to="/login"
               className="font-medium text-primary-600 hover:text-primary-500"
@@ -53,11 +53,14 @@ export default function Register() {
             </Link>
           </p>
         </div>
-        
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Full Name
               </label>
               <div className="mt-1 relative">
@@ -76,9 +79,12 @@ export default function Register() {
                 />
               </div>
             </div>
-            
+
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Email address
               </label>
               <div className="mt-1 relative">
@@ -97,9 +103,12 @@ export default function Register() {
                 />
               </div>
             </div>
-            
+
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Password
               </label>
               <div className="mt-1 relative">
@@ -119,9 +128,12 @@ export default function Register() {
                 />
               </div>
             </div>
-            
+
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Confirm Password
               </label>
               <div className="mt-1 relative">
@@ -136,15 +148,17 @@ export default function Register() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className={`input pl-10 ${
-                    password !== confirmPassword && confirmPassword 
-                      ? 'border-red-500 focus:ring-red-500' 
-                      : ''
+                    password !== confirmPassword && confirmPassword
+                      ? "border-red-500 focus:ring-red-500"
+                      : ""
                   }`}
                   placeholder="Confirm your password"
                 />
               </div>
               {password !== confirmPassword && confirmPassword && (
-                <p className="mt-1 text-sm text-red-600">Passwords do not match</p>
+                <p className="mt-1 text-sm text-red-600">
+                  Passwords do not match
+                </p>
               )}
             </div>
           </div>
@@ -156,7 +170,7 @@ export default function Register() {
               className="btn-primary w-full flex items-center justify-center disabled:opacity-50"
             >
               {loading ? (
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                <Loader2 className="h-5 w-5 animate-spin" />
               ) : (
                 <>
                   <UserPlus className="h-5 w-5 mr-2" />
@@ -168,5 +182,5 @@ export default function Register() {
         </form>
       </div>
     </div>
-  )
+  );
 }

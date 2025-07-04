@@ -1,5 +1,14 @@
 import { Draggable } from "react-beautiful-dnd";
-import { Edit2, Trash2, User, Clock, Zap } from "lucide-react";
+import {
+  Edit2,
+  Trash2,
+  User,
+  Clock,
+  Zap,
+  Circle,
+  AlertTriangle,
+  AlertCircle,
+} from "lucide-react";
 
 const priorityColors = {
   Low: "bg-green-100 text-green-800",
@@ -8,9 +17,9 @@ const priorityColors = {
 };
 
 const priorityIcons = {
-  Low: "●",
-  Medium: "●●",
-  High: "●●●",
+  Low: <Circle className="h-3 w-3" />,
+  Medium: <AlertTriangle className="h-3 w-3" />,
+  High: <AlertCircle className="h-3 w-3" />,
 };
 
 export default function TaskCard({
@@ -70,11 +79,12 @@ export default function TaskCard({
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <span
-                className={`text-xs px-2 py-1 rounded-full ${
+                className={`flex items-center space-x-1 text-xs px-2 py-1 rounded-full ${
                   priorityColors[task.priority]
                 }`}
               >
-                {priorityIcons[task.priority]} {task.priority}
+                {priorityIcons[task.priority]}
+                <span>{task.priority}</span>
               </span>
 
               {assignedUser ? (

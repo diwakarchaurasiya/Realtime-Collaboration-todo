@@ -1,12 +1,23 @@
-import { Activity, User, Clock } from "lucide-react";
+import {
+  Activity,
+  User,
+  Clock,
+  Sparkles,
+  Edit,
+  Trash2,
+  RefreshCw,
+  UserCheck,
+  CheckCircle,
+  FileText,
+} from "lucide-react";
 
 const actionIcons = {
-  created: "✨",
-  updated: "📝",
-  deleted: "🗑️",
-  moved: "🔄",
-  assigned: "👤",
-  completed: "✅",
+  created: <Sparkles className="h-3 w-3" />,
+  updated: <Edit className="h-3 w-3" />,
+  deleted: <Trash2 className="h-3 w-3" />,
+  moved: <RefreshCw className="h-3 w-3" />,
+  assigned: <UserCheck className="h-3 w-3" />,
+  completed: <CheckCircle className="h-3 w-3" />,
 };
 
 const actionColors = {
@@ -53,9 +64,11 @@ export default function ActivityPanel({ activities }) {
                 className="flex items-start space-x-3 p-3 bg-slate-50 rounded-lg animate-fade-in"
               >
                 <div className="flex-shrink-0 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm">
-                  <span className="text-sm">
-                    {actionIcons[activity.action] || "📋"}
-                  </span>
+                  <div className="text-slate-600">
+                    {actionIcons[activity.action] || (
+                      <FileText className="h-3 w-3" />
+                    )}
+                  </div>
                 </div>
 
                 <div className="flex-1 min-w-0">

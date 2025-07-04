@@ -8,6 +8,7 @@ import CreateTaskModal from "./modals/CreateTaskModal";
 import EditTaskModal from "./modals/EditTaskModal";
 import ConflictModal from "./modals/ConflictModal";
 import { toast } from "react-toastify";
+import { Loader2 } from "lucide-react";
 import api from "../utils/api";
 
 export default function Dashboard() {
@@ -146,7 +147,7 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <Loader2 className="h-12 w-12 animate-spin text-primary-600" />
       </div>
     );
   }
