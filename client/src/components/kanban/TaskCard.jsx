@@ -76,8 +76,8 @@ export default function TaskCard({
             </p>
           )}
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="flex items-center  flex-wrap gap-2 text-slate-600 text-xs">
               <span
                 className={`flex items-center space-x-1 text-xs px-2 py-1 rounded-full ${
                   priorityColors[task.priority]
@@ -88,7 +88,7 @@ export default function TaskCard({
               </span>
 
               {assignedUser ? (
-                <div className="flex items-center space-x-1">
+                <div className="flex items-center  space-x-1">
                   <div className="w-6 h-6 bg-primary-100 rounded-full flex items-center justify-center">
                     <User className="h-3 w-3 text-primary-600" />
                   </div>
@@ -107,7 +107,7 @@ export default function TaskCard({
               ) : (
                 <div className="flex items-center space-x-1 text-xs text-slate-500">
                   <User className="h-3 w-3" />
-                  <span>Unassigned</span>
+                  <span>Diwakar chaurasiya</span>
                 </div>
               )}
             </div>
