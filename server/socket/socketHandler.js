@@ -44,7 +44,7 @@ export const handleSocketConnection = (socket, io) => {
         action: 'updated',
         taskId: task._id,
         taskTitle: task.title,
-        details: `Updated task "${task.title}" via real-time`
+        details: `Updated task "${task.title}"`
       });
       await activity.save();
       await activity.populate('user', 'name email avatar');
@@ -107,8 +107,8 @@ export const handleSocketConnection = (socket, io) => {
   // Handle task creation
   socket.on('task-created', async (task) => {
     try {
-      // Broadcast to all other users in the board (excluding sender)
-      socket.to('main-board').emit('task-created', task);
+      // Broadcast to all users in the board (including sender for consistency)
+      io.to('main-board').emit('task-created', task);
     } catch (error) {
       console.error('Task creation broadcast error:', error);
     }
@@ -117,8 +117,8 @@ export const handleSocketConnection = (socket, io) => {
   // Handle task assignment
   socket.on('task-assigned', async (task) => {
     try {
-      // Broadcast to all other users in the board (excluding sender)
-      socket.to('main-board').emit('task-assigned', task);
+      // Broadcast to all users in the board (including sender for consistency)
+      io.to('main-board').emit('task-assigned', task);
     } catch (error) {
       console.error('Task assignment broadcast error:', error);
     }
@@ -198,6 +198,40 @@ export const handleSocketConnection = (socket, io) => {
     } catch (error) {
       console.error('Conflict resolution error:', error);
       socket.emit('error', { message: 'Failed to resolve conflict' });
+    }
+  });
+
+  // Handle smart assignment updates
+  socket.on('task-smart-assign', async (data) => {
+    try {
+      const { taskId } = data;
+
+      const task = await Task.findById(taskId);
+      if (!task) {
+        socket.emit('error', { message: 'Task not found' });
+        return;
+      }
+
+      await task.populate(['assignedUser', 'createdBy'], 'name email avatar');
+
+      // Log activity for smart assignment
+      const activity = new Activity({
+        user: socket.user._id,
+        action: 'assigned',
+        taskId: task._id,
+        taskTitle: task.title,
+        details: `Smart assigned task "${task.title}" to ${task.assignedUser?.name || 'a user'}`
+      });
+      await activity.save();
+      await activity.populate('user', 'name email avatar');
+
+      // Broadcast to all users in the board
+      io.to('main-board').emit('task-assigned', task);
+      io.to('main-board').emit('activity-added', activity);
+
+    } catch (error) {
+      console.error('Smart assign broadcast error:', error);
+      socket.emit('error', { message: 'Failed to broadcast smart assignment' });
     }
   });
 

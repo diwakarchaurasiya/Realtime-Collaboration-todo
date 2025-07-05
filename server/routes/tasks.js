@@ -73,6 +73,11 @@ router.post('/', [
       details: `Created task "${task.title}"`
     });
     await activity.save();
+    await activity.populate('user', 'name email avatar');
+
+    // Emit socket events for real-time updates
+    req.io.to('main-board').emit('task-created', task);
+    req.io.to('main-board').emit('activity-added', activity);
 
     res.status(201).json(task);
   } catch (error) {
@@ -138,6 +143,11 @@ router.put('/:id', [
       details: `Updated task "${task.title}"`
     });
     await activity.save();
+    await activity.populate('user', 'name email avatar');
+
+    // Emit socket events for real-time updates
+    req.io.to('main-board').emit('task-updated', task);
+    req.io.to('main-board').emit('activity-added', activity);
 
     res.json(task);
   } catch (error) {
@@ -165,8 +175,14 @@ router.delete('/:id', authenticateToken, async (req, res) => {
       details: `Deleted task "${task.title}"`
     });
     await activity.save();
+    await activity.populate('user', 'name email avatar');
 
     await Task.findByIdAndDelete(id);
+
+    // Emit socket events for real-time updates
+    req.io.to('main-board').emit('task-deleted', { taskId: id });
+    req.io.to('main-board').emit('activity-added', activity);
+
     res.json({ message: 'Task deleted successfully' });
   } catch (error) {
     console.error('Delete task error:', error);
@@ -217,6 +233,11 @@ router.post('/:id/smart-assign', authenticateToken, async (req, res) => {
       details: `Smart assigned task "${task.title}" to ${userWithMinTasks.user.name}`
     });
     await activity.save();
+    await activity.populate('user', 'name email avatar');
+
+    // Emit socket events for real-time updates
+    req.io.to('main-board').emit('task-assigned', task);
+    req.io.to('main-board').emit('activity-added', activity);
 
     res.json(task);
   } catch (error) {

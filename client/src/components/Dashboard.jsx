@@ -135,8 +135,13 @@ export default function Dashboard() {
       setTasks((prev) =>
         prev.map((t) => (t._id === taskId ? response.data : t))
       );
+
+      // Emit socket event to broadcast the assignment to all users
+      if (socket) {
+        socket.emit("task-smart-assign", { taskId });
+      }
+
       toast.success("Task assigned automatically!");
-      // Backend should emit 'activity-added' here for smart assignment
     } catch (error) {
       const message = error.response?.data?.message || "Failed to assign task";
       toast.error(message);

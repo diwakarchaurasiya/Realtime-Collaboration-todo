@@ -28,6 +28,12 @@ const io = new Server(server, {
 app.use(cors());
 app.use(express.json());
 
+// Make io available to routes
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
